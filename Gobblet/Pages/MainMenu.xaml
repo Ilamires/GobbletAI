@@ -17,5 +17,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <TextBlock FontSize="80" FontWeight="Bold" Text="Gobblet" Grid.Row="1" HorizontalAlignment="Center" Foreground="Chocolate"/>
+        <Button FontSize="45" Content="Начать игру" Click="StartGame_Click" Grid.Row="3" Height="75" Width="420" />
+        <Button FontSize="45" Content="Выход" Click="Exit_Click" Grid.Row="4" Height="75" Width="420" />
     </Grid>
 </Page>

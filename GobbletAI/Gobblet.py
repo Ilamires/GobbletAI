@@ -73,7 +73,7 @@ class Gobblet:
                 return True, winner
 
         total_used = sum(2 - r for r in self.reserve[1]) + sum(2 - r for r in self.reserve[-1])
-        if total_used == 12:  # 6+6 фигур
+        if total_used == 12:
             return True, 0
 
         return False, None
