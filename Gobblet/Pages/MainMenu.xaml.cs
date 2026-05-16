@@ -12,7 +12,7 @@ public partial class MainMenu : Page
     private void StartGame_Click(object sender, RoutedEventArgs e)
     {
         MainWindow? mainWindow = Application.Current.MainWindow as MainWindow;
-        mainWindow?.MainFrame.Navigate(new TurnChooseMenu());
+        mainWindow?.MainFrame.Navigate(new LoadingScreen());
     }
 
     private void Exit_Click(object sender, RoutedEventArgs e)
