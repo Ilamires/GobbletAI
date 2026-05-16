@@ -14,7 +14,13 @@ public partial class GamePage : Page
     public GamePage(bool playerGoFirst)
     {
         InitializeComponent();
-        
+
+        setFieldButtons();
+        placeFieldButtons();
+    }
+
+    public void setFieldButtons()
+    {
         FieldButtons = new GameFieldButton[FieldSize][];
         for (int i = 0; i < FieldSize; ++i)
         {
@@ -31,7 +37,10 @@ public partial class GamePage : Page
                 Grid.SetZIndex(FieldButtons[i][j], 1);
             }
         }
-        
+    }
+    
+    public void placeFieldButtons()
+    {
         for (int row = 0; row < FieldSize; ++row)
         {
             for (int col = 0; col < FieldSize; ++col)
