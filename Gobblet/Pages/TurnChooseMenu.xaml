@@ -1,0 +1,25 @@
+<Page x:Class="Gobblet.Pages.TurnChooseMenu"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Gobblet.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="900" d:DesignWidth="1600"
+      Title="TurnChooseMenu">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="310"/>
+            <RowDefinition Height="90"/>
+            <RowDefinition Height="90"/>
+            <RowDefinition Height="90"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock FontSize="70" FontWeight="Bold" Text="Выберите очерёдность" Grid.Row="1" HorizontalAlignment="Center"/>
+        <Button FontSize="45" Content="Ходить первым" Height="75" Width="420" Click="GoFirst_Click" Grid.Row="3"/>
+        <Button FontSize="45" Content="Ходить вторым" Height="75" Width="420" Click="GoSecond_Click" Grid.Row="4"/>
+        <Button FontSize="45" Content="Назад" Height="75" Width="420" Click="BackToMainMenu_Click" Grid.Row="5"/>
+    </Grid>
+</Page>
