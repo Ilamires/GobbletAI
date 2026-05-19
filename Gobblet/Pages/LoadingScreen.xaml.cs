@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Globalization;
 
 namespace Gobblet.Pages;
 
@@ -19,19 +20,36 @@ public partial class LoadingScreen : Page
 
     private async Task TrainingAsync()
     {
-        int progress = 0;
-        while (progress <= 100)
+        Console.WriteLine(1);
+        App.Python.OutputReceived += OnAITrainingOutput;
+        App.Python.SendToPython("START_TRAINING_IF_NEEDED");
+        Console.WriteLine(3);
+    }
+    
+    private void OnAITrainingOutput(string data)
+    {
+        Console.WriteLine(2);
+        if (data.StartsWith("PROGRESS "))
         {
-            LoadingBar.Value = progress;
-            PercentText.Text = $"{progress}%";
-                
-            await Task.Delay(2000);
-            progress += 10;
+            Console.WriteLine(data);
+            var parts = data.Split(' ');
+            if (parts.Length == 2 && double.TryParse(parts[1], CultureInfo.InvariantCulture, out double percent))
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    LoadingBar.Value = percent;
+                    PercentText.Text = $"{percent:F1}%";
+                });
+            }
         }
-
-        await Task.Delay(500);
-            
-        MainWindow? mainWindow = Application.Current.MainWindow as MainWindow;
-        mainWindow?.MainFrame.Navigate(new TurnChooseMenu());
+        else if (data == "TRAINING_FINISHED")
+        {
+            Dispatcher.Invoke(() =>
+            {
+                App.Python.OutputReceived -= OnAITrainingOutput;
+                MainWindow? mainWindow = Application.Current.MainWindow as MainWindow;
+                mainWindow?.MainFrame.Navigate(new TurnChooseMenu());
+            });
+        }
     }
 }

@@ -1,6 +1,7 @@
 from GobbletDQNAgent import *
 import numpy as np
 import tqdm
+import sys
 
 def train_self_play(episodes=10000):
     env = Gobblet()
@@ -53,9 +54,15 @@ def train_self_play(episodes=10000):
         })
         pbar.update(1)
 
+        if (e + 1) % 100 == 0 or e == episodes - 1:
+            progress = (e + 1) / episodes * 100
+            print(f"PROGRESS {progress:.1f}")
+            sys.stdout.flush()
+
         if e % 2000 == 0 and e > 0:
             agent1.save(f"agent1_backup.pth")
             agent2.save(f"agent2_backup.pth")
 
     pbar.close()
+
     return agent1, agent2
