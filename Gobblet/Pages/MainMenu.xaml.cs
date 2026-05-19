@@ -15,15 +15,7 @@ public partial class MainMenu : Page
             (data) => data == "true", 5000);
 
         MainWindow? mainWindow = Application.Current.MainWindow as MainWindow;
-        
-        if (hasWeights)
-        {
-            mainWindow?.MainFrame.Navigate(new TurnChooseMenu());
-        }
-        else
-        {
-            mainWindow?.MainFrame.Navigate(new LoadingScreen());
-        }
+        mainWindow?.MainFrame.Navigate(hasWeights ? new TurnChooseMenu() : new LoadingScreen());
     }
 
     private void Exit_Click(object sender, RoutedEventArgs e)
