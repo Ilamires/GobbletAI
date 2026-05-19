@@ -9,10 +9,21 @@ public partial class MainMenu : Page
         InitializeComponent();
     }
     
-    private void StartGame_Click(object sender, RoutedEventArgs e)
+    private async void StartGame_Click(object sender, RoutedEventArgs e)
     {
+        bool hasWeights = await App.Python.AskPythonAsync<bool>("CHECK_WEIGHTS", 
+            (data) => data == "true", 5000);
+
         MainWindow? mainWindow = Application.Current.MainWindow as MainWindow;
-        mainWindow?.MainFrame.Navigate(new TurnChooseMenu());
+        
+        if (hasWeights)
+        {
+            mainWindow?.MainFrame.Navigate(new TurnChooseMenu());
+        }
+        else
+        {
+            mainWindow?.MainFrame.Navigate(new LoadingScreen());
+        }
     }
 
     private void Exit_Click(object sender, RoutedEventArgs e)
