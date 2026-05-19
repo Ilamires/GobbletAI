@@ -60,6 +60,36 @@ public class PythonBridge
         pythonProcess.StandardInput.WriteLine(message);
         pythonProcess.StandardInput.Flush();
     }
+    
+    public async Task<T> AskPythonAsync<T>(string command, Func<string, T> parser, int timeoutMs = 5000)
+    {
+        var tcs = new TaskCompletionSource<T>();
+
+        void OnResponseHandler(string data)
+        {
+            try
+            {
+                OutputReceived -= OnResponseHandler;
+                T result = parser(data);
+                tcs.TrySetResult(result);
+            }
+            catch (Exception ex)
+            {
+                tcs.TrySetException(ex);
+            }
+        }
+
+        OutputReceived += OnResponseHandler;
+        SendToPython(command);
+
+        var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(timeoutMs));
+
+        if (completedTask == tcs.Task)
+            return await tcs.Task;
+
+        OutputReceived -= OnResponseHandler;
+        throw new TimeoutException($"Python не ответил на '{command}' за {timeoutMs} мс.");
+    }
 
     public void Dispose()
     {

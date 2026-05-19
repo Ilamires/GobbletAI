@@ -1,5 +1,12 @@
 from time import sleep
 from TrainSelfPlay import *
+import sys
+import os
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL1_PATH = os.path.join(SCRIPT_DIR, "gobblet_agent1.pth")
+MODEL2_PATH = os.path.join(SCRIPT_DIR, "gobblet_agent2.pth")
+
 
 def play_vs_random_first(agent, games=100):
     env = Gobblet()
@@ -23,6 +30,7 @@ def play_vs_random_first(agent, games=100):
                 break
     print(f"Результаты за {games} игр: Победы: {wins}, Поражения: {losses}, Ничьи: {draws}")
 
+
 def play_vs_random_second(agent, games=100):
     env = Gobblet()
     wins, losses, draws = 0, 0, 0
@@ -44,6 +52,7 @@ def play_vs_random_second(agent, games=100):
                     draws += 1
                 break
     print(f"Результаты за {games} игр: Победы: {wins}, Поражения: {losses}, Ничьи: {draws}")
+
 
 def play_agents(agent1, agent2, games=100):
     env = Gobblet()
@@ -83,7 +92,25 @@ def play_agents(agent1, agent2, games=100):
     print(f"Результаты за {games} игр: Агент1 — {wins1}, Агент2 — {wins2}, Ничьи — {draws}")
 
 
+def check_weight(model_path):
+    return os.path.isfile(model_path)
+
+
+def main():
+    for line in sys.stdin:
+        command = line.strip()
+
+        if command == "CHECK_WEIGHTS":
+            exists = check_weight(MODEL1_PATH) and check_weight(MODEL2_PATH)
+            print("true" if exists else "false")
+            sys.stdout.flush()
+
+        elif command == "EXIT":
+            break
+
+
 if __name__ == "__main__":
+    main()
     agent1 = GobbletDQNAgent()
     agent2 = GobbletDQNAgent()
     model1_path = "gobblet_agent1.pth"

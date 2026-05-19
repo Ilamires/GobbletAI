@@ -10,21 +10,23 @@ public partial class LoadingScreen : Page
     public LoadingScreen()
     {
         InitializeComponent();
-        Loaded += LoadingPage_Loaded;
+        Loaded += AITraining_Loaded;
     }
-    private async void LoadingPage_Loaded(object sender, RoutedEventArgs e)
+    private async void AITraining_Loaded(object sender, RoutedEventArgs e)
     {
-        await SimulateTrainingAsync();
+        await TrainingAsync();
     }
 
-    private async Task SimulateTrainingAsync()
+    private async Task TrainingAsync()
     {
-        for (int progress = 0; progress <= 100; progress += 10)
+        int progress = 0;
+        while (progress <= 100)
         {
             LoadingBar.Value = progress;
             PercentText.Text = $"{progress}%";
                 
             await Task.Delay(2000);
+            progress += 10;
         }
 
         await Task.Delay(500);
