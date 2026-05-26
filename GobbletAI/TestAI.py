@@ -98,8 +98,18 @@ def check_weight(model_path):
 
 
 def main():
-    env = NULL
+    env = None
     agents = [GobbletDQNAgent(), GobbletDQNAgent()]
+    global agent1
+    global agent2
+    model1_path = "gobblet_agent1.pth"
+    model2_path = "gobblet_agent2.pth"
+    agent1 = GobbletDQNAgent()
+    agent2 = GobbletDQNAgent()
+    agent1.load(model1_path)
+    agent2.load(model2_path)
+    agent1.epsilon = 0.0
+    agent2.epsilon = 0.0
     agent_number = 0
 
     for line in sys.stdin:
@@ -114,19 +124,19 @@ def main():
             if (not exists):
                 model1_path = "gobblet_agent1.pth"
                 model2_path = "gobblet_agent2.pth"
-                trained_agent1, trained_agent2 = train_self_play(episodes=10000)
+                trained_agent1, trained_agent2 = train_self_play(episodes=1000000)
                 trained_agent1.save(model1_path)
                 trained_agent2.save(model2_path)
             print("TRAINING_FINISHED")
             sys.stdout.flush()
         elif command.startswith("START_GAME"):
             env = Gobblet()
-            model1_path = "gobblet_agent1.pth"
-            model2_path = "gobblet_agent2.pth"
-            agents[0].load(model1_path)
-            agents[1].load(model2_path)
             agent_number = int(command.split()[1])
-            print("true" if env is not NULL else "false")
+            agent1 = GobbletDQNAgent()
+            agent2 = GobbletDQNAgent()
+            agent1.load(model1_path)
+            agent2.load(model2_path)
+            print("true" if env is not None else "false")
             sys.stdout.flush()
         elif command.startswith("CHECK_TURN"):
             action = int(command.split(" ")[1])
@@ -140,7 +150,10 @@ def main():
             print(f"win {done} {reward}" if done else "continue")
             sys.stdout.flush()
         elif command == ("TAKE_AI_TURN"):
-            action = agents[agent_number].act(env.get_state(), env.get_valid_actions())
+            if agent_number == 0:
+                action = agent1.act(env.get_state(), env.get_valid_actions())
+            else:
+                action = agent2.act(env.get_state(), env.get_valid_actions())
             state, reward, done = env.step(action)
             print(f"DEBUG: AI sees Board={env.board}, Valid={env.get_valid_actions()}", file=sys.stderr)
             sys.stderr.flush()
@@ -163,7 +176,7 @@ if __name__ == "__main__":
     except FileNotFoundError:
         print("Модель не найдена. Начинаем обучение с нуля...")
         sleep(1)
-        agent1, agent2 = train_self_play(episodes=10000)
+        agent1, agent2 = train_self_play(episodes=1000000, checkpoint_path="checkpoints/agent1_ep910000.pt", start_episode=910000)
         agent1.save(model1_path)
         agent2.save(model2_path)
         print("Модель сохранена!")
