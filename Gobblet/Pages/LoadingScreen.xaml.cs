@@ -20,15 +20,12 @@ public partial class LoadingScreen : Page
 
     private async Task TrainingAsync()
     {
-        Console.WriteLine(1);
         App.Python.OutputReceived += OnAITrainingOutput;
         App.Python.SendToPython("START_TRAINING_IF_NEEDED");
-        Console.WriteLine(3);
     }
     
     private void OnAITrainingOutput(string data)
     {
-        Console.WriteLine(2);
         if (data.StartsWith("PROGRESS "))
         {
             Console.WriteLine(data);

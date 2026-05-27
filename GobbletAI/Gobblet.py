@@ -73,7 +73,7 @@ class Gobblet:
                 return True, winner
 
         total_used = sum(2 - r for r in self.reserve[1]) + sum(2 - r for r in self.reserve[-1])
-        if total_used == 12:
+        if len(self.get_valid_actions()) == 0:
             return True, 0
 
         return False, None

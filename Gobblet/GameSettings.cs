@@ -17,4 +17,11 @@ public class GameSettings
         PlayerGoFirst = playerGoFirst;
         Turn = 1;
     }
+
+    public void TakeTurn() => ++Turn;
+    public void Restart()
+    {
+        PlayerGoFirst = true;
+        Turn = 1;
+    }
 }
