@@ -5,8 +5,15 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Gobblet.Pages"
       mc:Ignorable="d"
-      Title="ResultScreen" Height="450" Width="800">
+      Title="ResultScreen" Height="900" Width="1600">
     <Grid>
-        
+        <TextBlock x:Name="ResultText" Margin="0,100,0,0" FontSize="80" FontWeight="Bold"
+                   Text="You win!!!" HorizontalAlignment="Center" Foreground="LimeGreen"/>
+        <Button FontSize="45" Content="Выбрать ход" Click="ChooseTurn_Click" HorizontalAlignment="Center"
+                VerticalAlignment="Bottom" Margin="0,0,0,280" Height="75" Width="420" />
+        <Button FontSize="45" Content="Начать сначала" Click="RestartGame_Click" HorizontalAlignment="Center"
+                VerticalAlignment="Bottom" Margin="0,0,0,190" Height="75" Width="420" />
+        <Button FontSize="45" Content="Выход" Click="Exit_Click" HorizontalAlignment="Center"
+                VerticalAlignment="Bottom" Margin="0,0,0,100" Height="75" Width="420" />
     </Grid>
 </Page>

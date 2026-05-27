@@ -7,11 +7,10 @@ namespace Gobblet.Pages;
 
 public partial class GamePage : Page
 {
-    
     GameSettings settings;
     public byte FieldSize { get; } = 3;
     public byte FieldSectionWidth { get; } = 90;
-    
+
 
     GameFieldButton[][] FieldButtons;
     GameButton[][] FirstPlayerButtons;
@@ -19,10 +18,11 @@ public partial class GamePage : Page
     GameButton[][][] PlayerButtons;
 
     GameButton chosenPlayerButton;
+
     public GamePage(bool playerGoFirst)
     {
         InitializeComponent();
-        
+
         settings = new GameSettings(playerGoFirst);
 
         setFieldButtons();
@@ -42,7 +42,7 @@ public partial class GamePage : Page
     private async void TakeFirstAITurn()
     {
         string[] result = (await App.Python.AskPythonAsync<string>(
-            $"TAKE_AI_TURN", 
+            $"TAKE_AI_TURN",
             (data) => data, 5000)).Split(' ');
         TakeAITurn(int.Parse(result[0]));
     }
@@ -77,7 +77,7 @@ public partial class GamePage : Page
             }
         }
     }
-    
+
     private void placeFieldButtons()
     {
         for (int row = 0; row < FieldSize; ++row)
@@ -87,11 +87,10 @@ public partial class GamePage : Page
                 Grid.SetRow(FieldButtons[row][col], row);
                 Grid.SetColumn(FieldButtons[row][col], col);
                 InnerGridCentralField.Children.Add(FieldButtons[row][col]);
-
             }
         }
     }
-    
+
     private void setPlayerButtons(int playerNumber)
     {
         for (int i = 0; i < PlayerButtons[playerNumber].Length; ++i)
@@ -106,12 +105,12 @@ public partial class GamePage : Page
                 PlayerButtons[playerNumber][i][j].Height = buttonSize;
                 PlayerButtons[playerNumber][i][j].ButtonColor = playerNumber == 0 ? Brushes.Blue : Brushes.Orange;
                 PlayerButtons[playerNumber][i][j].IsEnabled = (settings.PlayerGoFirst && playerNumber == 0 ||
-                                                              !settings.PlayerGoFirst && playerNumber == 1);
+                                                               !settings.PlayerGoFirst && playerNumber == 1);
                 PlayerButtons[playerNumber][i][j].Click += PlayerButton_Click;
             }
         }
     }
-    
+
     private void placePlayerButtons(int playerNumber)
     {
         for (int row = 0; row < PlayerButtons[playerNumber].Length; ++row)
@@ -135,7 +134,7 @@ public partial class GamePage : Page
             }
         }
     }
-    
+
     private async void TakeTurn_Click(object sender, EventArgs e)
     {
         if (chosenPlayerButton != null)
@@ -153,7 +152,7 @@ public partial class GamePage : Page
             }
         }
     }
-    
+
     private void PlayerButton_Click(object sender, EventArgs e)
     {
         GameButton button = (GameButton)sender;
@@ -173,23 +172,24 @@ public partial class GamePage : Page
             }
         }
     }
+
     private async Task<bool> TakeTurn(GameFieldButton button)
     {
         bool isValidTurn = await App.Python.AskPythonAsync<bool>(
-            $"CHECK_TURN {(button.PositionX * 3 + button.PositionY) * 3 + (int)chosenPlayerButton.Size - 1}", 
+            $"CHECK_TURN {(button.PositionX * 3 + button.PositionY) * 3 + (int)chosenPlayerButton.Size - 1}",
             (data) => data == "true", 5000);
 
         string[] result = null;
         if (isValidTurn)
             result = (await App.Python.AskPythonAsync<string>(
-            $"TAKE_TURN {(button.PositionX * 3 + button.PositionY) * 3 + (int)chosenPlayerButton.Size - 1}", 
-            (data) => data, 5000)).Split(' ');
+                $"TAKE_TURN {(button.PositionX * 3 + button.PositionY) * 3 + (int)chosenPlayerButton.Size - 1}",
+                (data) => data, 5000)).Split(' ');
         if (isValidTurn)
             settings.TakeTurn();
         MainWindow? mainWindow = Application.Current.MainWindow as MainWindow;
         if (result.Length > 1)
         {
-            mainWindow?.MainFrame.Navigate(new ResultScreen(result[2]));
+            mainWindow?.MainFrame.Navigate(new ResultScreen(result[2], settings.PlayerGoFirst));
         }
         else
         {
@@ -197,13 +197,21 @@ public partial class GamePage : Page
                 $"TAKE_AI_TURN",
                 (data) => data, 5000)).Split(' ');
             TakeAITurn(int.Parse(result[0]));
-            if (result.Length > 1)
-                mainWindow?.MainFrame.Navigate(new ResultScreen(result[2]));
+            if (result.Length > 2)
+            {
+                foreach (var item in result)
+                {
+                    Console.Write(item + " ");
+                }
+
+                Console.WriteLine();
+                mainWindow?.MainFrame.Navigate(new ResultScreen(result[3], settings.PlayerGoFirst));
+            }
         }
-        
+
         return isValidTurn;
     }
-    
+
     private async void TakeAITurn(int action)
     {
         int cell = action / 3;
@@ -212,7 +220,7 @@ public partial class GamePage : Page
         int j = 0;
         while (PlayerButtons[playerNumber][size][j] == null)
             ++j;
-        
+
         GameFieldButton button = FieldButtons[cell / 3][cell % 3];
         Grid.SetRow(PlayerButtons[playerNumber][size][j], button.PositionX);
         Grid.SetColumn(PlayerButtons[playerNumber][size][j], button.PositionY);

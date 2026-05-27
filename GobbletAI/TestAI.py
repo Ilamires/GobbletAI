@@ -146,7 +146,7 @@ def main():
             state, reward, done = env.step(action)
             print(f"DEBUG: AI sees Board={env.board}, Valid={env.get_valid_actions()}", file=sys.stderr)
             sys.stderr.flush()
-            print(f"win {done} {reward}" if done else f"{action} continue")
+            print(f"{action} win {done} -{reward}" if done else f"{action} continue")
             sys.stdout.flush()
         elif command == "EXIT":
             break
