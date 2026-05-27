@@ -184,13 +184,22 @@ public partial class GamePage : Page
             result = (await App.Python.AskPythonAsync<string>(
             $"TAKE_TURN {(button.PositionX * 3 + button.PositionY) * 3 + (int)chosenPlayerButton.Size - 1}", 
             (data) => data, 5000)).Split(' ');
-        Console.WriteLine(result);
         if (isValidTurn)
             settings.TakeTurn();
-        result = (await App.Python.AskPythonAsync<string>(
-            $"TAKE_AI_TURN", 
-            (data) => data, 5000)).Split(' ');
-        TakeAITurn(int.Parse(result[0]));
+        MainWindow? mainWindow = Application.Current.MainWindow as MainWindow;
+        if (result.Length > 1)
+        {
+            mainWindow?.MainFrame.Navigate(new ResultScreen(result[2]));
+        }
+        else
+        {
+            result = (await App.Python.AskPythonAsync<string>(
+                $"TAKE_AI_TURN",
+                (data) => data, 5000)).Split(' ');
+            TakeAITurn(int.Parse(result[0]));
+            if (result.Length > 1)
+                mainWindow?.MainFrame.Navigate(new ResultScreen(result[2]));
+        }
         
         return isValidTurn;
     }

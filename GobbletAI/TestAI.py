@@ -135,16 +135,18 @@ def main():
         elif command.startswith("TAKE_TURN"):
             action = int(command.split(" ")[1])
             state, reward, done = env.step(action)
-            print(f"DEBUG: Human move={action}, Board={env.board}, Player={env.current_player}", file=sys.stderr)
+            print(f"DEBUG: Human move={action}, Board={env.board}, Player={env.current_player}, Valid={env.get_valid_actions()}", file=sys.stderr)
             sys.stderr.flush()
             print(f"win {done} {reward}" if done else "continue")
             sys.stdout.flush()
         elif command == ("TAKE_AI_TURN"):
+            print(f"DEBUG: AI sees Board={env.board}, Valid={env.get_valid_actions()}", file=sys.stderr)
+            sys.stderr.flush()
             action = agents[agent_number].act(env.get_state(), env.get_valid_actions())
             state, reward, done = env.step(action)
             print(f"DEBUG: AI sees Board={env.board}, Valid={env.get_valid_actions()}", file=sys.stderr)
             sys.stderr.flush()
-            print(f"{action} win {done} {reward}" if done else f"{action} continue")
+            print(f"win {done} {reward}" if done else f"{action} continue")
             sys.stdout.flush()
         elif command == "EXIT":
             break
